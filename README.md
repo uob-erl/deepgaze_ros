@@ -16,9 +16,11 @@ In the case of an error while running check opencv library imported in python on
 
 by running
 
+```shell
 python
 import cv2
 cv2.__version__
+```
 
 there is the chance that ros kinetic will install cv 3.3 over the 2.4 required by the algorithm to perform properly 
 
