@@ -12,7 +12,7 @@ follow instructions from http://dlib.net/compile.html for using dlib in python
 
 # Troubleshooting
 
-In the case of an error while running check opencv library imported in python on terminal 
+In the case of an error with cv2 check, opencv library imported in python, on terminal 
 
 by running
 
