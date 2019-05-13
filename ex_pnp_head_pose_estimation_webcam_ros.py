@@ -17,8 +17,7 @@ import math
 from std_msgs.msg import Float32MultiArray
 
 
-rospy.init_node('headang_pub' , anonymous=True)
-rate = rospy.Rate(15)
+
 
 
 
@@ -58,6 +57,7 @@ ALL_POINTS = list(range(0,68)) #Used for debug only
 
 
 def main():
+
 
     #Defining the video capture object
     video_capture = cv2.VideoCapture(0)
@@ -340,28 +340,7 @@ def main():
 
                 #print numpy.array([x, y, z])
                 print numpy.array([xr, yr, zr])
-
-
-
-
-
-#publisher
-
-
-
-
-                
-
-                #pub = rospy.Publisher('headangles', Float32MultiArray, queue_size=10)
-
-                #while not rospy.is_shutdown():
-                #   rate.sleep()
-    
-                    #try:
-                     #  headangles = [xr, yr, zr]
-                     #  pub.publish(headangles)
-                    #except rospy.ROSInterruptException:
-                     #   pass
+                headangles = numpy.array([xr, yr, zr])
 
 
 
@@ -378,9 +357,6 @@ def main():
 
 
 #printtests
-                #while not rospy.is_shutdown():
-                #   print numpy.array([xr, yr, zr])
-                #  rate.sleep()
 
                 #print (rvec)    #
                 #print (tvec)    #
@@ -399,7 +375,8 @@ def main():
                          (0, 255, 255),
                          2)
 
-        #Showing the frame and waiting
+
+    #Showing the frame and waiting
         # for the exit command
         cv2.imshow('Video', frame)
         if cv2.waitKey(1) & 0xFF == ord('q'): break
@@ -409,6 +386,25 @@ def main():
     print("Bye...")
 
 
+#publisher
+def talker():
+    rospy.init_node('headang_pub', anonymous=True)
+    publisher = rospy.Publisher('headangles', Float32MultiArray ,queue_size=10)
+    rate = rospy.Rate(15)
+
+
+    while not rospy.is_shutdown():
+
+
+        rate.sleep()
+
+        try:
+            headangles = numpy.array([xr, yr, zr])
+            publisher.publish(headangles)
+        except rospy.ROSInterruptException:
+            pass
+
+    rospy.spin()
 
 if __name__ == "__main__":
     main()
