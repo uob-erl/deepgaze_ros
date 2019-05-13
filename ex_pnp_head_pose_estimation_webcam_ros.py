@@ -7,6 +7,8 @@
 # It uses the dlib library and openCV
 #
 
+
+# exo valei ta diafora import pou xreiazetai to ros
 import rospy
 import numpy
 import cv2
@@ -128,6 +130,10 @@ def main():
                                   P3D_LEFT_EYE,
                                   P3D_STOMION])
 
+    #edo genika vgainoun ta error otan to script psaxnei tis ypoloipes routines
+    #to arxeio shape_preditctor_68_face_landmarks.dat leipei apo to repo tou deepgaze kai prepei na to katevaseis
+    
+    
     #Declaring the two classifiers
     #my_cascade = haarCascade("/home/petousakis/deepgaze/etc/xml/haarcascade_frontalface_alt.xml", "/home/petousakis/deepgaze/etc/xml/haarcascade_profileface.xml")
     #TODO If missing, example file can be retrieved from http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2
@@ -308,7 +314,7 @@ def main():
 
 
 # head angle calculation
-
+# edo exo mia version pou mas dinei tin klisi tou kefaliou apo ta dedomena poy syllegei to script
 
 
 
