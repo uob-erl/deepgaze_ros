@@ -16,7 +16,7 @@ import sys
 from deepgaze.haar_cascade import haarCascade
 from deepgaze.face_landmark_detection import faceLandmarkDetection
 import math
-from std_msgs.msg import Float32MultiArray
+from std_msgs.msg import Float32MultiArray # type of msg subject to change 
 
 
 
@@ -342,7 +342,9 @@ def main():
                 yr=math.degrees(y)
                 zr=math.degrees(z)
 
-
+#Value selection for publishing : for our currect experiment the most important value is the one related to yaw = yr
+#we could implement an exponential smoothing filter here and publish the smoothed value
+#or just export the value to ros and implement the filter on the subscriber's end (opinions ?)
 
                 #print numpy.array([x, y, z])
                 print numpy.array([xr, yr, zr])
@@ -390,9 +392,10 @@ def main():
     #Release the camera
     video_capture.release()
     print("Bye...")
-
-
+    
 #publisher
+#Is not in a working state at the moment because of the msg type 
+
 def talker():
     rospy.init_node('headang_pub', anonymous=True)
     publisher = rospy.Publisher('headangles', Float32MultiArray ,queue_size=10)
