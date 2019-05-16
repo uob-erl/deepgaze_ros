@@ -61,7 +61,7 @@ def main():
 
     publisher = rospy.Publisher('yaw', Float32, queue_size=10)
     rospy.init_node('headang_pub', anonymous=False)
-    rate = rospy.Rate(15)
+    #rate = rospy.Rate(15)
 
     while not rospy.is_shutdown():
 
@@ -399,7 +399,7 @@ def main():
         video_capture.release()
         print("Bye...")
 
-        rate.sleep()
+        #rate.sleep()
 
     rospy.spin()
 
