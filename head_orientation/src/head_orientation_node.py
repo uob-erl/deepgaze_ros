@@ -137,10 +137,10 @@ def main():
                                       P3D_STOMION])
 
 
-        # Declaring the two classifiers
-        my_cascade = haarCascade("/home/petousakis/dgros_ws/src/dg_pub/src/deepgaze/etc/xml/haarcascade_frontalface_alt.xml", "/home/petousakis/dgros_ws/src/dg_pub/src/deepgaze/etc/xml/haarcascade_profileface.xml")
+        # Declaring the two classifiers, put you deepgaze_ros path
+        my_cascade = haarCascade("/home/manolis/deepgaze/etc/xml/haarcascade_frontalface_alt.xml", "'/home/manolis/deepgaze/etc/xml/haarcascade_profileface.xml")
         # TODO If missing, example file can be retrieved from http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2
-        my_detector = faceLandmarkDetection('/home/petousakis/dgros_ws/src/dg_pub/src/deepgaze/etc/shape_predictor_68_face_landmarks.dat')
+        my_detector = faceLandmarkDetection('/hri_ws/src/deepgaze_ros/shape_predictor_68_face_landmarks.dat')
 
 
         no_face_counter = 0
