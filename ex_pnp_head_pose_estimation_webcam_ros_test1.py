@@ -136,25 +136,21 @@ def main():
                                       P3D_LEFT_EYE,
                                       P3D_STOMION])
 
-        #Declaring the two classifiers
-        #my_cascade = haarCascade("/home/petousakis/deepgaze/etc/xml/haarcascade_frontalface_alt.xml", "/home/petousakis/deepgaze/etc/xml/haarcascade_profileface.xml")
-        #TODO If missing, example file can be retrieved from http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2
-        #my_detector = faceLandmarkDetection('/home/petousakis/deepgaze/etc/shape_predictor_68_face_landmarks.dat')
 
         # Declaring the two classifiers
         my_cascade = haarCascade("/home/petousakis/dgros_ws/src/dg_pub/src/deepgaze/etc/xml/haarcascade_frontalface_alt.xml", "/home/petousakis/dgros_ws/src/dg_pub/src/deepgaze/etc/xml/haarcascade_profileface.xml")
         # TODO If missing, example file can be retrieved from http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2
         my_detector = faceLandmarkDetection('/home/petousakis/dgros_ws/src/dg_pub/src/deepgaze/etc/shape_predictor_68_face_landmarks.dat')
 
-        # Declaring the two classifiers
-        #my_cascade = haarCascade("./etc/xml/haarcascade_frontalface_alt.xml", "./etc/xml/haarcascade_profileface.xml")
-        # TODO If missing, example file can be retrieved from http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2
-        #my_detector = faceLandmarkDetection('.etc/shape_predictor_68_face_landmarks.dat')
 
-        #my_cascade = HaarFaceDetector("../etc/xml/haarcascade_frontalface_alt.xml", "../etc/xml/haarcascade_profileface.xml") fromtroubleshooting h me mia teleia
-        #my_cascade = haarCascade("/home/petousakis/deepgaze/etc/xml/haarcascade_frontalface_alt.xml", "/home/petousakis/deepgaze/etc/xml/haarcascade_profileface.xml")
-        #Error counter definition
         no_face_counter = 0
+
+        # Exponential Smoothing Filter init
+        face_counter = 0
+        exp_sm_thres = 25
+        sf = 0.06
+        yaw_sum = 0
+        yaw_avg = 0
 
         #Variables that identify the face
         #position in the main frame.
@@ -211,11 +207,18 @@ def main():
                 roi_w = cam_w
                 roi_h = cam_h
 
+                ##ESM Value reset on loss of Head
+                face_counter = 0
+                yaw_avg = 0
+                yaw_sum = 0
+                yaw = 0
+
             #Checking wich kind of face it is returned
             if(my_cascade.face_type > 0):
 
                 #Face found, reset the error counter
                 no_face_counter = 0
+                face_counter += 1
 
                 #Because the dlib landmark detector wants a precise
                 #boundary box of the face, it is necessary to resize
@@ -350,11 +353,11 @@ def main():
                     #print numpy.array([xr, yr, zr])
                     #headangles = numpy.array([xr, yr, zr])
 
-
-                    yaw = yr
+                    yaw_sum, yaw_avg = Exponential_smoothing_filter(face_counter, exp_sm_thres, sf, yr, yaw_sum,
+                                                                    yaw_avg)
                     #print (yaw)
-                    rospy.loginfo(yaw)
-                    publisher.publish(yaw)
+                    rospy.loginfo(yaw_avg)
+                    publisher.publish(yaw_avg)
 
 
 
@@ -403,7 +406,19 @@ def main():
 
     rospy.spin()
 
+def Exponential_smoothing_filter(face_counter, exponential_smoothing_threshold, smoothing_factor, yaw, yaw_sum, yaw_avg):
 
+
+    if (face_counter <= exponential_smoothing_threshold):
+        yaw_sum += yaw
+        yaw_avg = yaw_sum / face_counter
+        print(yaw_avg)
+
+    elif (face_counter > exponential_smoothing_threshold):
+        yaw_avg = smoothing_factor * yaw + (1 - smoothing_factor) * yaw_avg
+        print (yaw_avg, yaw)
+
+    return yaw_sum, yaw_avg
 
 if __name__ == "__main__":
     main()
