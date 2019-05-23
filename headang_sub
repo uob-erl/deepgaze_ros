@@ -1,5 +1,5 @@
 #include "ros/ros.h"
-#include "std_msgs/Float32MultiArray.h"
+#include "std_msgs/Float32.h"
 
 #include <cmath>
 #include <iostream>
@@ -10,16 +10,13 @@ public:
   HeadAnglesController();
 
 private:
-  void HeadAnglesSubCallback(const std_msgs::Float32MultiArray& headangles);  // type of msg might change
-
+  void HeadAnglesSubCallback(const std_msgs::Float32& headangles);  // Initially we will us one variable related to yaw. 
 
 
 
   int loa_, number_timesteps_, count_timesteps_;
   bool valid_loa_;
-  float headangles[3]; // depending on the output of deepgaze pub
-                       // we might change that to a single value
-                       // post exponential filter or not.
+  float yaw_avg;  // yaw_avg value is already filtered through an exponential smoothing filter
   std_msgs::Bool loa_change_, loa_changed_msg_;
 
 
@@ -44,7 +41,7 @@ int main(int argc, char *argv[])
   ros::init(argc, argv, "headang_sub");
 
 
-  ros::Rate r(15); // 15hz
+  ros::Rate r(15); // 15 hz / might need to change rate to free !!
   while (pros::ok())
   {
     ros::spinOnce();
