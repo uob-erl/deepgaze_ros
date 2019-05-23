@@ -30,8 +30,8 @@ We are going with the solution of running the project on two machines
 in order to run the script for the publisher you will need the deepgaze repo
 and point to the correct locations of the repo on the script 
 
-mainly pay attention to have shape_predictor_68_face_landmarks.dat in the etc folder of deepgaze 
-and the declaration of the other scripts used by the program on line 129 to 132
+Place the shape_predictor_68_face_landmarks.dat in the etc folder of deepgaze 
+and declare the path to the etc folder of deepgaze on your system. 
 
 ```shell
  # Declaring the two classifiers
