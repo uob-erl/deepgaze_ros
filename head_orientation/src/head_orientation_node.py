@@ -59,8 +59,12 @@ ALL_POINTS = list(range(0,68)) #Used for debug only
 
 def main():
 
-    publisher = rospy.Publisher('yaw', Float32, queue_size=10)
     rospy.init_node('headang_pub', anonymous=False)
+
+    Ppublisher = rospy.Publisher('Pitch', Float32, queue_size=10)
+    Ypublisher = rospy.Publisher('Yaw', Float32, queue_size=10)
+    Rpublisher = rospy.Publisher('Roll', Float32, queue_size=10)
+
     #rate = rospy.Rate(15)
 
     while not rospy.is_shutdown():
@@ -151,6 +155,10 @@ def main():
         sf = 0.06
         yaw_sum = 0
         yaw_avg = 0
+        pitch_avg = 0
+        pitch_sum = 0
+        roll_sum = 0
+        roll_avg = 0
 
         #Variables that identify the face
         #position in the main frame.
@@ -212,6 +220,13 @@ def main():
                 yaw_avg = 0
                 yaw_sum = 0
                 yaw = 0
+                pitch_avg = 0
+                pitch_sum = 0
+                pitch = 0
+                roll_sum = 0
+                roll_avg = 0
+                roll = 0
+
 
             #Checking wich kind of face it is returned
             if(my_cascade.face_type > 0):
@@ -343,9 +358,9 @@ def main():
                         y = math.atan2(-rmat[2, 0], sy)
                         z = 0
 
-                    xr=math.degrees(x)
-                    yr=math.degrees(y)
-                    zr=math.degrees(z)
+                    xr=math.degrees(x)  #Pitch
+                    yr=math.degrees(y)  #Yaw
+                    zr=math.degrees(z)  #Roll
 
 
 
@@ -355,11 +370,19 @@ def main():
 
                     yaw_sum, yaw_avg = Exponential_smoothing_filter(face_counter, exp_sm_thres, sf, yr, yaw_sum,
                                                                     yaw_avg)
+
+                    pitch_sum, pitch_avg = Exponential_smoothing_filter(face_counter, exp_sm_thres, sf, xr, pitch_sum,
+                                                                    pitch_avg)
+
+                    roll_sum, roll_avg = Exponential_smoothing_filter(face_counter, exp_sm_thres, sf, zr, roll_sum,
+                                                                        roll_avg)
+
                     #print (yaw)
-                    rospy.loginfo(yaw_avg)
-                    publisher.publish(yaw_avg)
+                    #rospy.loginfo(yaw_avg)
 
-
+                    Ppublisher.publish(pitch_avg)
+                    Ypublisher.publish(yaw_avg)
+                    Rpublisher.publish(roll_avg)
 
                     #Drawing the three axis on the image frame.
                     #The opencv colors are defined as BGR colors such as:
@@ -406,19 +429,19 @@ def main():
 
     rospy.spin()
 
-def Exponential_smoothing_filter(face_counter, exponential_smoothing_threshold, smoothing_factor, yaw, yaw_sum, yaw_avg):
+def Exponential_smoothing_filter(face_counter, exponential_smoothing_threshold, smoothing_factor, angle, angle_sum, angle_avg):
 
 
     if (face_counter <= exponential_smoothing_threshold):
-        yaw_sum += yaw
-        yaw_avg = yaw_sum / face_counter
-        print(yaw_avg)
+        angle_sum += angle
+        angle_avg = angle_sum / face_counter
+        print(angle_avg)
 
     elif (face_counter > exponential_smoothing_threshold):
-        yaw_avg = smoothing_factor * yaw + (1 - smoothing_factor) * yaw_avg
-        print (yaw_avg, yaw)
+        angle_avg = smoothing_factor * angle + (1 - smoothing_factor) * angle_avg
+        print (angle_avg, angle)
 
-    return yaw_sum, yaw_avg
+    return angle_sum, angle_avg
 
 if __name__ == "__main__":
     main()
