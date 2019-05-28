@@ -15,6 +15,8 @@ from deepgaze.haar_cascade import haarCascade
 from deepgaze.face_landmark_detection import faceLandmarkDetection
 import math
 
+# Import of variable type for ROS publisher
+
 from std_msgs.msg import Float32
 
 
@@ -59,13 +61,13 @@ ALL_POINTS = list(range(0,68)) #Used for debug only
 
 def main():
 
-    rospy.init_node('headang_pub', anonymous=False)
+    rospy.init_node('headang_pub', anonymous=False)    # ROS node init
 
-    Ppublisher = rospy.Publisher('Pitch', Float32, queue_size=10)
+    Ppublisher = rospy.Publisher('Pitch', Float32, queue_size=10)    # Declaration of ROS Publishers
     Ypublisher = rospy.Publisher('Yaw', Float32, queue_size=10)
     Rpublisher = rospy.Publisher('Roll', Float32, queue_size=10)
 
-    #rate = rospy.Rate(15)
+    #rate = rospy.Rate(15) // disabled rate in order to have maximum refresh rate on ROS
 
     while not rospy.is_shutdown():
 
@@ -140,19 +142,23 @@ def main():
                                       P3D_LEFT_EYE,
                                       P3D_STOMION])
 
+        # When setting script up for execution you must change the variable to correspond to the location of the files on your system
+
 
         # Declaring the two classifiers, put you deepgaze_ros path
         my_cascade = haarCascade("/home/petousakis/deepgaze/etc/xml/haarcascade_frontalface_alt.xml", "/home/petousakis/deepgaze/etc/xml/haarcascade_profileface.xml")
         # TODO If missing, example file can be retrieved from http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2
         my_detector = faceLandmarkDetection('/home/petousakis/deepgaze/etc/shape_predictor_68_face_landmarks.dat')
 
+        # Initialisation
 
         no_face_counter = 0
 
-        # Exponential Smoothing Filter init
+        # Exponential Smoothing Filter initialisation
+
         face_counter = 0
         exp_sm_thres = 25
-        sf = 0.06
+        sf = 0.06           # Adjust smoothing factor to set the window frame for the calculation of the average
         yaw_sum = 0
         yaw_avg = 0
         pitch_avg = 0
@@ -215,7 +221,7 @@ def main():
                 roi_w = cam_w
                 roi_h = cam_h
 
-                ##ESM Value reset on loss of Head
+                # ESM Value reset on loss of Head
                 face_counter = 0
                 yaw_avg = 0
                 yaw_sum = 0
@@ -332,8 +338,8 @@ def main():
                     imgpts, jac = cv2.projectPoints(axis, rvec, tvec, camera_matrix, camera_distortion)
 
 
+                    # Head angle calculation in degrees
 
-    # head angle calculation
 
 
 
@@ -362,22 +368,19 @@ def main():
                     yr=math.degrees(y)  #Yaw
                     zr=math.degrees(z)  #Roll
 
+                    # Calling of Exponential Smoothing Function for pitch , yaw and roll
 
+                    pitch_sum, pitch_avg = Exponential_smoothing_filter(face_counter, exp_sm_thres, sf, xr, pitch_sum,
+                                                                        pitch_avg)
 
-                    #print numpy.array([x, y, z])
-                    #print numpy.array([xr, yr, zr])
-                    #headangles = numpy.array([xr, yr, zr])
 
                     yaw_sum, yaw_avg = Exponential_smoothing_filter(face_counter, exp_sm_thres, sf, yr, yaw_sum,
                                                                     yaw_avg)
 
-                    pitch_sum, pitch_avg = Exponential_smoothing_filter(face_counter, exp_sm_thres, sf, xr, pitch_sum,
-                                                                    pitch_avg)
 
                     roll_sum, roll_avg = Exponential_smoothing_filter(face_counter, exp_sm_thres, sf, zr, roll_sum,
                                                                         roll_avg)
 
-                    #print (yaw)
                     #rospy.loginfo(yaw_avg)
 
                     Ppublisher.publish(pitch_avg)
@@ -394,11 +397,6 @@ def main():
                     cv2.line(frame, sellion_xy, tuple(imgpts[0].ravel()), (0,0,255), 3) #RED
 
 
-    #printtests
-
-                    #print (rvec)    #
-                    #print (tvec)    #
-                    #print (my_cascade.face_type)
 
             #Drawing a yellow rectangle
             # (and text) around the ROI.
@@ -427,7 +425,9 @@ def main():
 
         #rate.sleep()
 
-    rospy.spin()
+    rospy.spin()  # check with position of spin to fix the shutdown error
+
+# Declaration of ESM function for the angles
 
 def Exponential_smoothing_filter(face_counter, exponential_smoothing_threshold, smoothing_factor, angle, angle_sum, angle_avg):
 
