@@ -39,3 +39,10 @@ and declare the path to the etc folder of deepgaze on your system.
     # TODO If missing, example file can be retrieved from http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2
     my_detector = faceLandmarkDetection('../etc/shape_predictor_68_face_landmarks.dat')
 ```
+
+# Installing libraries on Python
+
+When installing a lib with pip make use of the 
+
+sudo -H pip install ... etc
+
