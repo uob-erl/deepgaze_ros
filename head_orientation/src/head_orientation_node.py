@@ -14,12 +14,20 @@ import sys
 from deepgaze.haar_cascade import haarCascade
 from deepgaze.face_landmark_detection import faceLandmarkDetection
 import math
+import tensorflow as tf
+from deepgaze.head_pose_estimation import CnnHeadPoseEstimator
 
 # Import of variable type for ROS publisher
 
 from std_msgs.msg import Float32
+from std_msgs.msg import Int8
 
-
+#Cnn
+sess = tf.Session() #Launch the graph in a session.
+my_head_pose_estimator = CnnHeadPoseEstimator(sess) #Head pose estimation object
+my_head_pose_estimator.load_pitch_variables("/home/giannis/deepgaze/etc/tensorflow/head_pose/pitch/cnn_cccdd_30k.tf")
+my_head_pose_estimator.load_yaw_variables("/home/giannis/deepgaze/etc/tensorflow/head_pose/yaw/cnn_cccdd_30k.tf")
+#Cnn
 
 
 
@@ -63,9 +71,10 @@ def main():
 
     rospy.init_node('headang_pub', anonymous=False)    # ROS node init
 
-    Ppublisher = rospy.Publisher('Pitch', Float32, queue_size=10)    # Declaration of ROS Publishers
-    Ypublisher = rospy.Publisher('Yaw', Float32, queue_size=10)
-    Rpublisher = rospy.Publisher('Roll', Float32, queue_size=10)
+    #Ppublisher = rospy.Publisher('pitch', Float32, queue_size=10)    # Declaration of ROS Publishers
+    #Ypublisher = rospy.Publisher('yaw', Float32, queue_size=10)
+    #Rpublisher = rospy.Publisher('roll', Float32, queue_size=10)
+    Apublisher = rospy.Publisher('cognitive_availability', Int8, queue_size=10)
 
     #rate = rospy.Rate(15) // disabled rate in order to have maximum refresh rate on ROS
 
@@ -144,11 +153,24 @@ def main():
 
         # When setting script up for execution you must change the variable to correspond to the location of the files on your system
 
+        #Dell
+
 
         # Declaring the two classifiers, put you deepgaze_ros path
-        my_cascade = haarCascade("/home/petousakis/deepgaze/etc/xml/haarcascade_frontalface_alt.xml", "/home/petousakis/deepgaze/etc/xml/haarcascade_profileface.xml")
+        #my_cascade = haarCascade("/home/petousakis/deepgaze/etc/xml/haarcascade_frontalface_alt.xml", "/home/petousakis/deepgaze/etc/xml/haarcascade_profileface.xml")
         # TODO If missing, example file can be retrieved from http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2
-        my_detector = faceLandmarkDetection('/home/petousakis/deepgaze/etc/shape_predictor_68_face_landmarks.dat')
+        #my_detector = faceLandmarkDetection('/home/petousakis/deepgaze/etc/shape_predictor_68_face_landmarks.dat')
+
+        #Alienware
+
+        # Declaring the two classifiers, put you deepgaze_ros path
+        my_cascade = haarCascade("/home/giannis/deepgaze/etc/xml/haarcascade_frontalface_alt.xml", "/home/giannis//deepgaze/etc/xml/haarcascade_profileface.xml")
+        # TODO If missing, example file can be retrieved from http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2
+        my_detector = faceLandmarkDetection('/home/giannis//deepgaze/etc/shape_predictor_68_face_landmarks.dat')
+
+
+
+
 
         # Initialisation
 
@@ -318,6 +340,16 @@ def main():
                         for point in landmarks_2D:
                             cv2.circle(frame,( point[0], point[1] ), 2, (0,0,255), -1)
 
+                    # Cnn
+
+                    framer = cv2.resize(frame, (64, 64), interpolation=cv2.INTER_AREA)
+
+                    #pitch = my_head_pose_estimator.return_pitch(framer)  # Evaluate the pitch angle using a CNN
+                    #yaw = my_head_pose_estimator.return_yaw(framer)  # Evaluate the yaw angle using a CNN
+                    # print("Estimated pitch ..... " + str(pitch[0, 0, 0]))
+                    # print("Estimated yaw ..... " + str(yaw[0, 0, 0]))
+
+                    # Cnn
 
                     #Applying the PnP solver to find the 3D pose
                     # of the head from the 2D position of the
@@ -364,28 +396,31 @@ def main():
                         y = math.atan2(-rmat[2, 0], sy)
                         z = 0
 
-                    xr=math.degrees(x)  #Pitch
-                    yr=math.degrees(y)  #Yaw
-                    zr=math.degrees(z)  #Roll
+                    #xr=math.degrees(x)  #Pitch
+                    #yr=math.degrees(y)  #Yaw
+                    #zr=math.degrees(z)  #Roll
+
+                    #yr = pitch[0, 0, 0]
+                    #zr = yaw[0, 0, 0]
 
                     # Calling of Exponential Smoothing Function for pitch , yaw and roll
 
-                    pitch_sum, pitch_avg = Exponential_smoothing_filter(face_counter, exp_sm_thres, sf, xr, pitch_sum,
-                                                                        pitch_avg)
+                    #pitch_sum, pitch_avg = Exponential_smoothing_filter(face_counter, exp_sm_thres, sf, yr, pitch_sum, pitch_avg)
 
 
-                    yaw_sum, yaw_avg = Exponential_smoothing_filter(face_counter, exp_sm_thres, sf, yr, yaw_sum,
-                                                                    yaw_avg)
+                    #yaw_sum, yaw_avg = Exponential_smoothing_filter(face_counter, exp_sm_thres, sf, zr, yaw_sum, yaw_avg)
 
 
-                    roll_sum, roll_avg = Exponential_smoothing_filter(face_counter, exp_sm_thres, sf, zr, roll_sum,
-                                                                        roll_avg)
+                    #roll_sum, roll_avg = Exponential_smoothing_filter(face_counter, exp_sm_thres, sf, xr, roll_sum, roll_avg)
+
+
 
                     #rospy.loginfo(yaw_avg)
 
-                    Ppublisher.publish(pitch_avg)
-                    Ypublisher.publish(yaw_avg)
-                    Rpublisher.publish(roll_avg)
+                    #Ppublisher.publish(pitch_avg)
+                    #Ypublisher.publish(yaw_avg)
+                    #Rpublisher.publish(roll_avg)
+                    Apublisher.publish(my_cascade.face_type)
 
                     #Drawing the three axis on the image frame.
                     #The opencv colors are defined as BGR colors such as:
