@@ -180,9 +180,9 @@ def main():
         roll_avg = 0
         CognAv_avg = 0
         CognAv_sum = 0
-    	pitch_avg_cnn = 0
-    	pitch_sum_cnn = 0
-    	yaw_avg_cnn = 0
+        pitch_avg_cnn = 0
+        pitch_sum_cnn = 0
+        yaw_avg_cnn = 0
         yaw_sum_cnn = 0
 
         now = 0
@@ -247,15 +247,15 @@ def main():
                 yaw_avg = 0
                 yaw_sum = 0
                 yaw_avg_cnn = 0
-            	yaw_sum_cnn = 0
+                yaw_sum_cnn = 0
                 yaw = 0
                 pitch_avg = 0
                 pitch_sum = 0
                 pitch = 0
                 roll_sum = 0
                 roll_avg = 0
-            	pitch_avg_cnn = 0
-            	pitch_sum_cnn = 0
+                pitch_avg_cnn = 0
+                pitch_sum_cnn = 0
                 roll = 0
                 CognAv = 0
                 CognAv_sum = 0
@@ -346,7 +346,7 @@ def main():
                         for point in landmarks_2D:
                             cv2.circle(frame,( point[0], point[1] ), 2, (0,0,255), -1)
 
-              	    #Cnn
+                    #Cnn
 
                     #print (face_x1, face_x2, face_margin_x1, face_margin_x2)
 
@@ -408,7 +408,7 @@ def main():
                         y = math.atan2(-rmat[2, 0], sy)
                         z = 0
 
-		    yrc = pitch[0, 0, 0]
+                    yrc = pitch[0, 0, 0]
                     zrc = yaw[0, 0, 0]
 
 
