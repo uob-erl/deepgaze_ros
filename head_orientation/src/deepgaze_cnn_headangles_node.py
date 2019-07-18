@@ -24,8 +24,8 @@ from std_msgs.msg import Float32
 #Cnn
 sess = tf.Session() #Launch the graph in a session.
 my_head_pose_estimator = CnnHeadPoseEstimator(sess) #Head pose estimation object
-my_head_pose_estimator.load_pitch_variables("/home/petousakis/deepgaze/etc/tensorflow/head_pose/pitch/cnn_cccdd_30k.tf")
-my_head_pose_estimator.load_yaw_variables("/home/petousakis/deepgaze/etc/tensorflow/head_pose/yaw/cnn_cccdd_30k.tf")
+my_head_pose_estimator.load_pitch_variables("/home/giannis/deepgaze/etc/tensorflow/head_pose/pitch/cnn_cccdd_30k.tf")
+my_head_pose_estimator.load_yaw_variables("/home/giannis/deepgaze/etc/tensorflow/head_pose/yaw/cnn_cccdd_30k.tf")
 #Cnn
 
 
@@ -159,9 +159,9 @@ def main():
 
 
         # Declaring the two classifiers, put you deepgaze_ros path
-        my_cascade = haarCascade("/home/petousakis/deepgaze/etc/xml/haarcascade_frontalface_alt.xml", "/home/petousakis/deepgaze/etc/xml/haarcascade_profileface.xml")
+        my_cascade = haarCascade("/home/giannis/deepgaze/etc/xml/haarcascade_frontalface_alt.xml", "/home/giannis/deepgaze/etc/xml/haarcascade_profileface.xml")
         # TODO If missing, example file can be retrieved from http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2
-        my_detector = faceLandmarkDetection('/home/petousakis/deepgaze/etc/shape_predictor_68_face_landmarks.dat')
+        my_detector = faceLandmarkDetection('/home/giannis/deepgaze/etc/shape_predictor_68_face_landmarks.dat')
 
         # Initialisation
 
@@ -171,7 +171,7 @@ def main():
 
         face_counter = 0
         exp_sm_thres = 25
-        sf = 0.012           # Adjust smoothing factor to set the window frame for the calculation of the average
+        sf = 0.03          # Adjust smoothing factor to set the window frame for the calculation of the average
         yaw_sum = 0
         yaw_avg = 0
         pitch_avg = 0
@@ -414,15 +414,15 @@ def main():
 
                     # Calling of Exponential Smoothing Function for pitch , yaw
 
-                    pitch_sum, pitch_avg = Exponential_smoothing_filter(face_counter, exp_sm_thres, sf, yrc, pitch_sum_cnn, pitch_avg_cnn)
+                    pitch_sum_cnn, pitch_avg_cnn = Exponential_smoothing_filter(face_counter, exp_sm_thres, sf, yrc, pitch_sum_cnn, pitch_avg_cnn)
 
-                    yaw_sum, yaw_avg = Exponential_smoothing_filter(face_counter, exp_sm_thres, sf, zrc, yaw_sum_cnn, yaw_avg_cnn)
+                    yaw_sum_cnn, yaw_avg_cnn = Exponential_smoothing_filter(face_counter, exp_sm_thres, sf, zrc, yaw_sum_cnn, yaw_avg_cnn)
 
 
                     #rospy.loginfo(yaw_avg)
 
-                    Ppublisher.publish(pitch_avg)
-                    Ypublisher.publish(yaw_avg)
+                    #Ppublisher.publish(abs(pitch_avg_cnn))
+                    #Ypublisher.publish(abs(yaw_avg_cnn))
                     #Rpublisher.publish(roll_avg)
 
                     #Fpublisher.publish(my_cascade.face_type)
@@ -434,7 +434,7 @@ def main():
 
                     #CognAv_sum, CognAv_avg = Exponential_smoothing_filter(face_counter, exp_sm_thres, sf, CognAv, CognAv_sum, CognAv_avg)
 
-                    #CPublisher.publish(CognAv_avg)
+                    CPublisher.publish(abs(angle_avg))
 
                     previous = now
 
@@ -491,11 +491,11 @@ def Exponential_smoothing_filter(face_counter, exponential_smoothing_threshold, 
     if (face_counter <= exponential_smoothing_threshold):
         angle_sum += angle
         angle_avg = angle_sum / face_counter
-        print(angle_avg)
+        print(abs(angle_avg))
 
     elif (face_counter > exponential_smoothing_threshold):
         angle_avg = smoothing_factor * angle + (1 - smoothing_factor) * angle_avg
-        print (angle_avg, angle)
+        print (abs(angle_avg), abs(angle))
 
     return angle_sum, angle_avg
 
