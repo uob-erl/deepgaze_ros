@@ -86,7 +86,7 @@ def main():
 
 
         #Defining the video capture object
-        video_capture = cv2.VideoCapture(1)
+        video_capture = cv2.VideoCapture(0)
         #video_capture = cv2.VideoCapture(0)
 
         if(video_capture.isOpened() == False):
@@ -414,7 +414,7 @@ def main():
 
                     # Calling of Exponential Smoothing Function for pitch , yaw
 
-                    pitch_sum_cnn, pitch_avg_cnn = Exponential_smoothing_filter(face_counter, exp_sm_thres, sf, yrc, pitch_sum_cnn, pitch_avg_cnn)
+                    #pitch_sum_cnn, pitch_avg_cnn = Exponential_smoothing_filter(face_counter, exp_sm_thres, sf, yrc, pitch_sum_cnn, pitch_avg_cnn)
 
                     yaw_sum_cnn, yaw_avg_cnn = Exponential_smoothing_filter(face_counter, exp_sm_thres, sf, zrc, yaw_sum_cnn, yaw_avg_cnn)
 
@@ -433,8 +433,10 @@ def main():
                     #    CognAv = 0
 
                     #CognAv_sum, CognAv_avg = Exponential_smoothing_filter(face_counter, exp_sm_thres, sf, CognAv, CognAv_sum, CognAv_avg)
+                    cognav = yaw_avg_cnn
 
-                    CPublisher.publish(abs(angle_avg))
+
+                    CPublisher.publish(abs(cognav))
 
                     previous = now
 
