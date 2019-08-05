@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 ##
+# Extended and Costumized by Giannis Petousakis, Extreme Robotics Lab, University of Birmingham 2019
 # Massimiliano Patacchiola, Plymouth University 2016
 #
 # This is an example of head pose estimation with solvePnP.
@@ -68,11 +69,6 @@ def main():
 
     rospy.init_node('headang_pub', anonymous=False)    # ROS node init
 
-    #Ppublisher = rospy.Publisher('Pitch', Float32, queue_size=10)    # Declaration of ROS Publishers
-    #Ypublisher = rospy.Publisher('Yaw', Float32, queue_size=10)
-    #Rpublisher = rospy.Publisher('Roll', Float32, queue_size=10)
-
-    #Fpublisher = rospy.Publisher('Facetype', Float32, queue_size=10)
     CPublisher = rospy.Publisher('cognitive_availability' , Float32,  queue_size=10)
 
 
@@ -357,8 +353,6 @@ def main():
 
                     pitch = my_head_pose_estimator.return_pitch(frame_r)  # Evaluate the pitch angle using a CNN
                     yaw = my_head_pose_estimator.return_yaw(frame_r)  # Evaluate the yaw angle using a CNN
-                    #print("Estimated pitch ..... " + str(pitch[0, 0, 0]))
-                    #print("Estimated yaw ..... " + str(yaw[0, 0, 0]))
 
                     #Cnn
 
@@ -381,20 +375,9 @@ def main():
                                           [0,0,50]])
                     imgpts, jac = cv2.projectPoints(axis, rvec, tvec, camera_matrix, camera_distortion)
 
-
-                    # Head angle calculation in degrees
-
-
-
-
-
                     # Get as input the rotational vector
                     # Return a rotational matrix
                     rmat, _ = cv2.Rodrigues(rvec)
-
-                    # euler_angles contain (pitch, yaw, roll)
-                    # euler_angles = cv.DecomposeProjectionMatrix(projMatrix=rmat, cameraMatrix=camera_matrix, rotMatrix, transVect, rotMatrX=None, rotMatrY=None, rotMatrZ=None)
-
 
                     sy = math.sqrt(rmat[0, 0] * rmat[0, 0] + rmat[1, 0] * rmat[1, 0])
                     singular = sy < 1e-6
@@ -418,19 +401,6 @@ def main():
 
                     yaw_sum_cnn, yaw_avg_cnn = Exponential_smoothing_filter(face_counter, exp_sm_thres, sf, zrc, yaw_sum_cnn, yaw_avg_cnn)
 
-
-                    #rospy.loginfo(yaw_avg)
-
-                    #Ppublisher.publish(abs(pitch_avg_cnn))
-                    #Ypublisher.publish(abs(yaw_avg_cnn))
-                    #Rpublisher.publish(roll_avg)
-
-                    #Fpublisher.publish(my_cascade.face_type)
-
-                    #if (my_cascade.face_type == 1):
-                    #    CognAv = 1
-                    #elif (my_cascade.face_type >= 4):
-                    #    CognAv = 0
 
                     #CognAv_sum, CognAv_avg = Exponential_smoothing_filter(face_counter, exp_sm_thres, sf, CognAv, CognAv_sum, CognAv_avg)
                     cognav = yaw_avg_cnn
