@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
 ##
-# Extended and Costumized by Giannis Petousakis, Extreme Robotics Lab, University of Birmingham 2019
+# Extended and Customized by Giannis Petousakis, Extreme Robotics Lab, University of Birmingham 2019
 # Massimiliano Patacchiola, Plymouth University 2016
 #
-# This is an example of head pose estimation with solvePnP.
+# This is an example of head pose estimation with solvePnP and CNN.
 # It uses the dlib library and openCV
 #
 
