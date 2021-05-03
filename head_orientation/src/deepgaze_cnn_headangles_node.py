@@ -346,10 +346,10 @@ def main():
 
                     #print (face_x1, face_x2, face_margin_x1, face_margin_x2)
 
-                    frame_cnn=frame[face_y1:face_y2, face_x1:face_x2]
+                    frame_cnn=frame[face_y1:face_y2, face_x1:face_x2]   # Get the frame for the captured head
 
 
-                    frame_r = cv2.resize(frame_cnn, (64,64), interpolation = cv2.INTER_AREA)
+                    frame_r = cv2.resize(frame_cnn, (64,64), interpolation = cv2.INTER_AREA)  # Resize the frame to feed into the pose estimator
 
                     pitch = my_head_pose_estimator.return_pitch(frame_r)  # Evaluate the pitch angle using a CNN
                     yaw = my_head_pose_estimator.return_yaw(frame_r)  # Evaluate the yaw angle using a CNN
