@@ -5,6 +5,8 @@ ROS wrapper package for deepgaze
 
 https://github.com/mpatacchiola/deepgaze
 Follow instructions as shown in github to install the prerequisites 
+Install branch 2.0 
+replace face_detection.py in /deepgaze/deepgaze with version in this repo 
 
 # Install dlib for python
 Download dlib tar from http://dlib.net/ and 
