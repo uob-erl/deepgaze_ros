@@ -7,7 +7,7 @@ G. Petousakis, M. Chiou, G. Nikolaou and R. Stolkin, "Human operator cognitive a
 ROS wrapper package for deepgaze 
 
 # Install deepgaze library 
-
+For using the original deepgaze software cite Patacchiola et al as requested in their github page. 
 https://github.com/mpatacchiola/deepgaze
 Follow instructions as shown in github to install the prerequisites 
 
