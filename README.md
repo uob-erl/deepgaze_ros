@@ -1,4 +1,9 @@
 # deepgaze_ros
+If you use any of this code please cite our paper "Human operator cognitive availability aware Mixed-Initiative control". You can find it in IEEE explore link and arxiv link.
+
+G. Petousakis, M. Chiou, G. Nikolaou and R. Stolkin, "Human operator cognitive availability aware Mixed-Initiative control," 2020 IEEE International Conference on Human-Machine Systems (ICHMS), 2020, pp. 1-4, https://doi.org/10.1109/ICHMS49158.2020.9209582
+
+
 ROS wrapper package for deepgaze 
 
 # Install deepgaze library 
