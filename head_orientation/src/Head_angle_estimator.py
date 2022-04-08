@@ -151,14 +151,14 @@ def main():
         roi_resize_w = int(cam_w / 10)
         roi_resize_h = int(cam_h / 10)
 
-        hfd = HaarFaceDetector("../../etc/xml/haarcascade_frontalface_alt.xml", "../../etc/xml/haarcascade_profileface.xml")
+        hfd = HaarFaceDetector("/home/dimitris/hier_ws/src/deepgaze/etc/xml/haarcascade_frontalface_alt.xml", "/home/dimitris/hier_ws/src/deepgaze/etc/xml/haarcascade_profileface.xml")
 
         sess = tf.Session()  # Launch the graph in a session.
         my_head_pose_estimator = CnnHeadPoseEstimator(sess)  # Head pose estimation object
 
-        my_head_pose_estimator.load_yaw_variables(os.path.realpath("../../etc/tensorflow/head_pose/yaw/cnn_cccdd_30k.tf"))
-        my_head_pose_estimator.load_roll_variables(os.path.realpath("../../etc/tensorflow/head_pose/roll/cnn_cccdd_30k.tf"))
-        my_head_pose_estimator.load_pitch_variables(os.path.realpath("../../etc/tensorflow/head_pose/pitch/cnn_cccdd_30k.tf"))
+        my_head_pose_estimator.load_yaw_variables(os.path.realpath("/home/dimitris/hier_ws/src/deepgaze/etc/tensorflow/head_pose/yaw/cnn_cccdd_30k.tf"))
+        my_head_pose_estimator.load_roll_variables(os.path.realpath("/home/dimitris/hier_ws/src/deepgaze/etc/tensorflow/head_pose/roll/cnn_cccdd_30k.tf"))
+        my_head_pose_estimator.load_pitch_variables(os.path.realpath("/home/dimitris/hier_ws/src/deepgaze/etc/tensorflow/head_pose/pitch/cnn_cccdd_30k.tf"))
 
         while (True):
 
